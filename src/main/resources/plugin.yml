@@ -1,0 +1,10 @@
+name: SpigotConsole
+version: 1.0
+description: Brings the console to you
+author: Kyllian
+main: me.kyllian.spigotconsole.SpigotConsolePlugin
+
+commands:
+  spigotconsole:
+    description: Base command of the plugin
+    usage: /<command>
