@@ -1,2 +1,3 @@
 settings:
   reserved-maps: 10
+  port: 4567
