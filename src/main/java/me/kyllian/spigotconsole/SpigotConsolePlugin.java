@@ -32,7 +32,7 @@ public class SpigotConsolePlugin extends JavaPlugin {
         getCommand("spigotconsole").setExecutor(new SpigotConsoleExecutor(this));
 
         staticFileLocation("/public");
-        webSocket("/spigotconsole", ConnectionHandler.class);
+        webSocket("/spigotconsole", new ConnectionHandler(this));
 
         Spark.port(getConfig().getInt("settings.port"));
         Spark.init();

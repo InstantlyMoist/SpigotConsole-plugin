@@ -1,21 +1,30 @@
 package me.kyllian.spigotconsole.handlers;
 
+import me.kyllian.spigotconsole.SpigotConsolePlugin;
+import me.kyllian.spigotconsole.security.ResponseBuilder;
 import org.bukkit.Bukkit;
 import org.eclipse.jetty.websocket.api.Session;
 import org.eclipse.jetty.websocket.api.annotations.OnWebSocketClose;
 import org.eclipse.jetty.websocket.api.annotations.OnWebSocketConnect;
 import org.eclipse.jetty.websocket.api.annotations.OnWebSocketMessage;
 import org.eclipse.jetty.websocket.api.annotations.WebSocket;
+import org.json.JSONObject;
 
+import java.awt.*;
+import java.io.IOException;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 @WebSocket
 public class ConnectionHandler {
 
+    private SpigotConsolePlugin plugin;
+
     static Map<Session, String> userUsernameMap = new ConcurrentHashMap<>();
 
-    private String sender, msg;
+    public ConnectionHandler(SpigotConsolePlugin plugin) {
+        this.plugin = plugin;
+    }
 
     @OnWebSocketConnect
     public void onConnect(Session user) throws Exception {
@@ -32,8 +41,25 @@ public class ConnectionHandler {
 
     @OnWebSocketMessage
     public void onMessage(Session user, String message) {
+        JSONObject object = new JSONObject(message);
+        String receivedType = object.getString("type");
+        String receivedMessage = object.getString("message");
+        try {
+            switch (receivedType) {
+                case "INITIALHANDSHAKE":
+                    if (plugin.getKeyFileHandler().keyExists(receivedMessage)) {
+                        user.getRemote().sendString(new ResponseBuilder().setType("INITIALHANDSHAKE").setMessage("OK").build());
+                    } else {
+                        user.getRemote().sendString(new ResponseBuilder().setType("INITIALHANDSHAKE").setMessage("FAILED").build());
+                        user.close();
+                    }
+                    //TODO: Compare key and see if it exists
+
+            }
+        } catch (IOException exception) {
+            exception.printStackTrace();
+        }
         Bukkit.broadcastMessage(message);
-        Bukkit.broadcastMessage("Hello world");
     }
 
 }
