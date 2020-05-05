@@ -32,6 +32,7 @@ public class ConnectionHandler {
 
     @OnWebSocketMessage
     public void onMessage(Session user, String message) {
+        Bukkit.broadcastMessage(message);
         Bukkit.broadcastMessage("Hello world");
     }
 
