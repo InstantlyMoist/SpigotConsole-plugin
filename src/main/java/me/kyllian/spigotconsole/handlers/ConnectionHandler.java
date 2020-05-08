@@ -59,11 +59,17 @@ public class ConnectionHandler {
                         user.close();
                     }
                     break;
+                case "CONSOLE":
+                    new BukkitRunnable() {
+                        public void run() {
+                            Bukkit.dispatchCommand(Bukkit.getConsoleSender(), receivedMessage);
+                        }
+                    }.runTask(plugin);
             }
         } catch (IOException exception) {
             exception.printStackTrace();
         }
-        Bukkit.getLogger().info(message);
+        //Bukkit.getLogger().info(message);
     }
 
     public void broadcast(String type, String message) {
