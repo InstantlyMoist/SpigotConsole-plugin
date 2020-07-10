@@ -8,6 +8,7 @@ import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.MapMeta;
 import org.bukkit.map.MapCanvas;
 import org.bukkit.map.MapRenderer;
 import org.bukkit.map.MapView;
@@ -43,7 +44,7 @@ public class MapHandlerNew implements MapHandler {
         int currentMapAmount = maps.size();
         if (mapAmount > currentMapAmount) {
             Bukkit.getLogger().info("SpigotConsolePlugin didn't find existing, predefined maps. Generating them, this may take some time...");
-            World world = Bukkit.getWorld("world");
+            World world = Bukkit.getWorlds().get(0);
             for (int i = 0; i != mapAmount - currentMapAmount; i++) {
                 MapView mapView = Bukkit.createMap(world);
                 maps.add((int) mapView.getId());
@@ -76,6 +77,8 @@ public class MapHandlerNew implements MapHandler {
         MapView mapView = Bukkit.getMap(map.getDurability());
         mapView.getRenderers().clear();
 
+        MapMeta meta = (MapMeta) map.getItemMeta();
+
         mapView.addRenderer(new MapRenderer() {
             boolean rendered = false;
             @Override
@@ -85,6 +88,8 @@ public class MapHandlerNew implements MapHandler {
                 rendered = true;
             }
         });
+        meta.setMapView(mapView);
+        map.setItemMeta(meta);
         player.getInventory().setItemInMainHand(map);
     }
 

@@ -4,6 +4,7 @@ import com.sun.org.apache.xerces.internal.impl.dv.util.Base64;
 import me.kyllian.spigotconsole.SpigotConsolePlugin;
 import me.kyllian.spigotconsole.handlers.QRCodeHandler;
 import me.kyllian.spigotconsole.player.PlayerData;
+import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -20,14 +21,25 @@ public class SpigotConsoleExecutor implements CommandExecutor {
     }
 
     public boolean onCommand(CommandSender commandSender, Command command, String commandLabel, String[] args) {
-        if (args[0].equalsIgnoreCase("setup")) {
+
+        if (args.length == 1 && args[0].equalsIgnoreCase("setup")) {
             Player player = (Player) commandSender;
+            if (!player.isOp()) {
+                player.sendMessage(translateColor("&4You need to be OP to execute this command"));
+                return true;
+            }
             PlayerData playerData = plugin.getPlayerDataHandler().getPlayerData(player);
             playerData.setInSetup(true);
             //TODO: CHECK IF KEY EXISTS ALREADY
             Key foundKey = plugin.getCipherHandler().getOrCreateKey(player);
             plugin.getMapHandler().sendMap(player, QRCodeHandler.generate(Base64.encode(foundKey.getEncoded())));
+            return true;
         }
+        commandSender.sendMessage("&4Execute /spigotconsole setup");
         return true;
+    }
+
+    public String translateColor(String message) {
+        return ChatColor.translateAlternateColorCodes('&', message);
     }
 }

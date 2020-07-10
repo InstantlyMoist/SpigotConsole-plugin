@@ -18,6 +18,7 @@
                 <artifactId>maven-shade-plugin</artifactId>
                 <version>3.1.0</version>
                 <configuration>
+                    <minimizeJar>true</minimizeJar>
                     <outputFile>server/plugins/SpigotConsole.jar</outputFile>
                     <relocations>
                         <relocation>
@@ -61,7 +62,7 @@
         <dependency>
             <groupId>org.spigotmc</groupId>
             <artifactId>spigot-api</artifactId>
-            <version>1.12.2-R0.1-SNAPSHOT</version>
+            <version>1.16.1-R0.1-SNAPSHOT</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
@@ -98,7 +99,4 @@
 
 
     </dependencies>
-
-
-
 </project>
