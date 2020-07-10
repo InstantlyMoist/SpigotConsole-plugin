@@ -1,6 +1,7 @@
 package me.kyllian.spigotconsole.handlers;
 
 import me.kyllian.spigotconsole.SpigotConsolePlugin;
+import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.core.LogEvent;
 import org.apache.logging.log4j.core.appender.AbstractAppender;
 import org.apache.logging.log4j.core.config.plugins.Plugin;
@@ -26,11 +27,21 @@ public class ConsoleHandler extends AbstractAppender {
 
     @Override
     public void append(LogEvent e) {
+        StringBuilder builder = new StringBuilder();
+        Level logLevel = e.getLevel();
+        switch(logLevel.toString()) {
+            case "ERROR": builder.append("§4"); break;
+            case "INFO": builder.append("§a"); break;
+            case "WARN": builder.append("§e"); break;
+            default: builder.append("§f"); break;
+        }
         Calendar calendar = Calendar.getInstance();
         calendar.setTimeInMillis(e.getTimeMillis());
         String dateString = String.format("%d:%d:%d", calendar.get(Calendar.HOUR_OF_DAY), calendar.get(Calendar.MINUTE), calendar.get(Calendar.SECOND));
-        String finalString = String.format("[%s %s]: %s", dateString, e.getLevel().toString(), e.getMessage().getFormattedMessage());
-        plugin.getConnectionHandler().broadcast("CONSOLE", finalString);
+        builder.append(String.format("[%s %s]:", dateString, e.getLevel().toString()));
+        if (logLevel != Level.WARN) builder.append("§f");
+        builder.append(e.getMessage().getFormattedMessage());
+        plugin.getConnectionHandler().broadcast("CONSOLE", builder.toString());
         // Do something with text
     }
 }
