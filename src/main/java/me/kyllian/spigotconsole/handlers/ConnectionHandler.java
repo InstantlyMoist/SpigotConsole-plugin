@@ -2,8 +2,10 @@ package me.kyllian.spigotconsole.handlers;
 
 import jdk.nashorn.internal.runtime.ECMAException;
 import me.kyllian.spigotconsole.SpigotConsolePlugin;
+import me.kyllian.spigotconsole.player.PlayerData;
 import me.kyllian.spigotconsole.security.ResponseBuilder;
 import org.bukkit.Bukkit;
+import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.eclipse.jetty.websocket.api.Session;
 import org.eclipse.jetty.websocket.api.annotations.OnWebSocketClose;
@@ -17,6 +19,7 @@ import javax.xml.ws.Response;
 import java.awt.*;
 import java.io.IOException;
 import java.util.Map;
+import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
 @WebSocket
@@ -46,30 +49,43 @@ public class ConnectionHandler {
 
     @OnWebSocketMessage
     public void onMessage(Session user, String message) {
-        JSONObject object = new JSONObject(message);
-        String receivedType = object.getString("type");
-        String receivedMessage = object.getString("message");
-        try {
-            switch (receivedType) {
-                case "INITIALHANDSHAKE":
-                    if (plugin.getKeyFileHandler().keyExists(receivedMessage)) {
-                        user.getRemote().sendString(new ResponseBuilder().setType("INITIALHANDSHAKE").setMessage("OK").build());
-                    } else {
-                        user.getRemote().sendString(new ResponseBuilder().setType("INITIALHANDSHAKE").setMessage("FAILED").build());
-                        user.close();
+        new BukkitRunnable() {
+            public void run() {
+                JSONObject object = new JSONObject(message);
+                String receivedType = object.getString("type");
+                String receivedMessage = object.getString("message");
+                try {
+                    switch (receivedType) {
+                        case "INITIALHANDSHAKE":
+                            if (plugin.getKeyFileHandler().keyExists(receivedMessage)) {
+                                user.getRemote().sendString(new ResponseBuilder().setType("INITIALHANDSHAKE").setMessage("OK").build());
+
+                                UUID foundUUID = plugin.getKeyFileHandler().getUUIDFromKey(receivedMessage);
+                                if (foundUUID == null) return;
+                                Player player = Bukkit.getPlayer(foundUUID);
+                                if (player == null) return;
+                                PlayerData playerData = plugin.getPlayerDataHandler().getPlayerData(player);
+                                if (!playerData.isInSetup()) return;
+                                playerData.setInSetup(false);
+                                player.getInventory().setItemInMainHand(playerData.getHandItem());
+                                playerData.setHandItem(null);
+                            } else {
+                                user.getRemote().sendString(new ResponseBuilder().setType("INITIALHANDSHAKE").setMessage("FAILED").build());
+                                user.close();
+                            }
+                            break;
+                        case "CONSOLE":
+                            new BukkitRunnable() {
+                                public void run() {
+                                    Bukkit.dispatchCommand(Bukkit.getConsoleSender(), receivedMessage);
+                                }
+                            }.runTask(plugin);
                     }
-                    break;
-                case "CONSOLE":
-                    new BukkitRunnable() {
-                        public void run() {
-                            Bukkit.dispatchCommand(Bukkit.getConsoleSender(), receivedMessage);
-                        }
-                    }.runTask(plugin);
+                } catch (IOException exception) {
+                    exception.printStackTrace();
+                }
             }
-        } catch (IOException exception) {
-            exception.printStackTrace();
-        }
-        //Bukkit.getLogger().info(message);
+        }.runTaskAsynchronously(plugin);
     }
 
     public void broadcast(String type, String message) {

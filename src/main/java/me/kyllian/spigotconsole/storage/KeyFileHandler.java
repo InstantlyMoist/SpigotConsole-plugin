@@ -48,6 +48,14 @@ public class KeyFileHandler {
         return fileConfiguration.getString(uuid.toString());
     }
 
+    public UUID getUUIDFromKey(String key) {
+        UUID foundUUID = null;
+        for (String uuid : fileConfiguration.getConfigurationSection("").getKeys(false)) {
+            if (fileConfiguration.getString(uuid).equals(key)) foundUUID = UUID.fromString(uuid);
+        }
+        return foundUUID;
+    }
+
     public boolean keyExists(String key) {
         boolean exists = false;
         for (String uuid : fileConfiguration.getConfigurationSection("").getKeys(false)) {

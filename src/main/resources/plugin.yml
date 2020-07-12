@@ -7,4 +7,5 @@ main: me.kyllian.spigotconsole.SpigotConsolePlugin
 commands:
   spigotconsole:
     description: Base command of the plugin
+    aliases: [sc]
     usage: /<command>
