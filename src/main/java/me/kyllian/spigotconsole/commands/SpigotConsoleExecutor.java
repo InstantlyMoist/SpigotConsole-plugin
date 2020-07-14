@@ -11,6 +11,7 @@ import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
+import java.awt.image.BufferedImage;
 import java.security.Key;
 
 public class SpigotConsoleExecutor implements CommandExecutor {
@@ -40,9 +41,11 @@ public class SpigotConsoleExecutor implements CommandExecutor {
                 PlayerData playerData = plugin.getPlayerDataHandler().getPlayerData(player);
                 playerData.setInSetup(true);
                 playerData.setHandItem(player.getInventory().getItemInMainHand());
-                //TODO: CHECK IF KEY EXISTS ALREADY
+
                 Key foundKey = plugin.getCipherHandler().getOrCreateKey(player);
-                plugin.getMapHandler().sendMap(player, QRCodeHandler.generate(Base64.encode(foundKey.getEncoded())));
+                player.sendMessage("Due to an ongoing issue with maps, you can also temporarily find the QR-code on https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=" + Base64.encode(foundKey.getEncoded()));
+                BufferedImage qrCode = QRCodeHandler.generate(Base64.encode(foundKey.getEncoded()));
+                plugin.getMapHandler().sendMap(player, qrCode);
                 return true;
             }
         }

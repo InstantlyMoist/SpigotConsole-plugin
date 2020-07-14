@@ -58,20 +58,20 @@ public class MapHandlerNew implements MapHandler {
             }
         }
         maps.forEach(mapID -> {
-            ItemStack map = new ItemStack(Material.MAP);
+            ItemStack map = new ItemStack(Material.FILLED_MAP);
             map.setDurability(mapID.shortValue());
             mapsUsing.put(map, false);
         });
     }
 
     public void sendMap(Player player, BufferedImage image) {
+        Bukkit.broadcastMessage("Sending map");
         ItemStack map = mapsUsing.entrySet()
                 .stream()
                 .filter(mapValue -> !mapValue.getValue())
                 .findFirst()
                 .get()
                 .getKey();
-
         mapsUsing.put(map, true);
 
         MapView mapView = Bukkit.getMap(map.getDurability());

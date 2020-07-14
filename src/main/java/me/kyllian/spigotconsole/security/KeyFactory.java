@@ -7,10 +7,8 @@ import javax.crypto.KeyGenerator;
 import javax.crypto.SecretKey;
 import javax.crypto.spec.SecretKeySpec;
 import java.security.Key;
-import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
 import java.util.Base64;
-import java.util.HashMap;
 import java.util.UUID;
 
 public class KeyFactory {
@@ -34,14 +32,10 @@ public class KeyFactory {
     public static Key getKey(UUID uuid, SpigotConsolePlugin plugin) {
         String foundKey = plugin.getKeyFileHandler().getKey(uuid);
         if (foundKey == null) {
-            Bukkit.broadcastMessage("No key found, creating one");
             generateKey(uuid, plugin);
             return getKey(uuid, plugin);
         }
-        Bukkit.broadcastMessage("Found key, loading in");
         byte[] decodedKey = Base64.getDecoder().decode(foundKey);
         return new SecretKeySpec(decodedKey, 0, decodedKey.length, "AES");
-        //return keys.computeIfAbsent(uuid, f -> generateKey(uuid, plugin));
-        //TODO Later change to SQL/YAML data storage.
     }
 }
