@@ -63,4 +63,8 @@ public class KeyFileHandler {
         }
         return exists;
     }
+
+    public int getKeyAmount() {
+        return fileConfiguration.getConfigurationSection("").getKeys(false).size();
+    }
 }

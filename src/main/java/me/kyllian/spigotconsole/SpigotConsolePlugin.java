@@ -8,12 +8,14 @@ import me.kyllian.spigotconsole.handlers.map.MapHandler;
 import me.kyllian.spigotconsole.handlers.map.MapHandlerFactory;
 import me.kyllian.spigotconsole.security.CipherHandler;
 import me.kyllian.spigotconsole.storage.KeyFileHandler;
+import org.bstats.bukkit.Metrics;
 import org.bukkit.Bukkit;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.core.Logger;
 import org.bukkit.plugin.java.JavaPlugin;
 import spark.Spark;
 
+import java.util.concurrent.Callable;
 import java.util.logging.Handler;
 import java.util.logging.LogRecord;
 
@@ -36,7 +38,6 @@ public class SpigotConsolePlugin extends JavaPlugin {
         getConfig().options().copyDefaults(true);
         saveDefaultConfig();
 
-
         getCommand("spigotconsole").setExecutor(new SpigotConsoleExecutor(this));
 
         staticFileLocation("/public");
@@ -54,6 +55,10 @@ public class SpigotConsolePlugin extends JavaPlugin {
         mapHandler = new MapHandlerFactory(this).getMapHandler();
         playerDataHandler = new PlayerDataHandler();
         keyFileHandler = new KeyFileHandler(this);
+
+        Metrics metrics = new Metrics(this, 81115);
+
+        metrics.addCustomChart(new Metrics.SingleLineChart("used_devices", () -> keyFileHandler.getKeyAmount()));
     }
 
     public ConnectionHandler getConnectionHandler() {
