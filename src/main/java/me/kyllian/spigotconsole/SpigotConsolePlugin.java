@@ -65,6 +65,10 @@ public class SpigotConsolePlugin extends JavaPlugin {
         return connectionHandler;
     }
 
+    public ConsoleHandler getConsoleHandler() {
+        return consoleHandler;
+    }
+
     public CipherHandler getCipherHandler() {
         return cipherHandler;
     }

@@ -8,16 +8,22 @@ import org.apache.logging.log4j.core.config.plugins.Plugin;
 import org.apache.logging.log4j.core.layout.PatternLayout;
 
 import java.util.Calendar;
+import java.util.LinkedList;
 
 @Plugin(name = "ConsoleHandler", category = "Core", elementType = "appender", printObject = true)
 public class ConsoleHandler extends AbstractAppender {
 
     private SpigotConsolePlugin plugin;
 
+    private LinkedList<String> buffer;
+    private int bufferSize;
+
     public ConsoleHandler(SpigotConsolePlugin plugin) {
         super("ConsoleHandler", null,
                 PatternLayout.createDefaultLayout());
         this.plugin = plugin;
+        buffer = new LinkedList<>();
+        bufferSize = plugin.getConfig().getInt("settings.buffer-size");
     }
 
     @Override
@@ -58,6 +64,17 @@ public class ConsoleHandler extends AbstractAppender {
             if (e.getSource() != null) builder.append("Caused by").append("\t" + e.getSource().toString());
             builder.append("\n§4Errors may be incomplete, please refer to your original console for more information!");
         } else builder.append("§f").append(e.getMessage().getFormattedMessage());
-        plugin.getConnectionHandler().broadcast("CONSOLE", builder.toString());
+        String finalMessage = builder.toString();
+        adjustBuffer(finalMessage);
+        plugin.getConnectionHandler().broadcast("CONSOLE", finalMessage);
+    }
+
+    public void adjustBuffer(String message) {
+        if (buffer.size() > bufferSize) buffer.removeFirst();
+        buffer.add(message);
+    }
+
+    public LinkedList<String> getBuffer() {
+        return buffer;
     }
 }

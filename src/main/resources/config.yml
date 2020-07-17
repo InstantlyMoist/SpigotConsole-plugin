@@ -3,3 +3,4 @@
 settings:
   reserved-maps: 100
   port: 4567
+  buffer-size: 25

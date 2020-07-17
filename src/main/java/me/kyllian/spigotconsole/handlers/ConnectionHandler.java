@@ -58,6 +58,10 @@ public class ConnectionHandler {
                             sessions.remove(user);
                             verifiedSessions.add(user);
 
+                            plugin.getConsoleHandler().getBuffer().forEach(bufferLine -> {
+                                user.getRemote().sendStringByFuture(new ResponseBuilder().setType("CONSOLE").setMessage(bufferLine).build());
+                            });
+
                             UUID foundUUID = plugin.getKeyFileHandler().getUUIDFromKey(receivedMessage);
                             if (foundUUID == null) return;
                             Player player = Bukkit.getPlayer(foundUUID);
