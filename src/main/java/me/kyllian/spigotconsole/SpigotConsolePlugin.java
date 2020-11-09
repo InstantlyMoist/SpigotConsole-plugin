@@ -56,7 +56,7 @@ public class SpigotConsolePlugin extends JavaPlugin {
         playerDataHandler = new PlayerDataHandler();
         keyFileHandler = new KeyFileHandler(this);
 
-        Metrics metrics = new Metrics(this, 81115);
+        Metrics metrics = new Metrics(this, 8201);
 
         metrics.addCustomChart(new Metrics.SingleLineChart("used_devices", () -> keyFileHandler.getKeyAmount()));
     }
