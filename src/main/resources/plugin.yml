@@ -1,0 +1,10 @@
+name: SpigotConsole
+author: Kyllian
+version: ${project.version}
+main: me.kyllian.spigotconsole.SpigotConsolePlugin
+
+commands:
+  spigotconsole:
+    aliases:
+        - sc
+    usage: /<command>

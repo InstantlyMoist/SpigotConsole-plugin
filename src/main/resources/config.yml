@@ -1,0 +1,26 @@
+# Settings for SpigotConsole
+#
+# Need help? Join our Discord server: https://kyllian.nl/discord
+
+# Port used for SpigotConsole
+port: 4567
+
+# Roles tied to the app
+#
+# Current privileges: ADMIN, CHAT, CONSOLE, FTP, PLAYER
+
+roles:
+  owner:
+    permission: spigotconsole.app.owner
+    privileges:
+      - ADMIN
+      - CHAT
+      - CONSOLE
+      - FTP
+      - PLAYER
+  admin:
+    permission: spigotconsole.app.admin
+    privileges:
+      - CHAT
+      - CONSOLE
+      - PLAYER
