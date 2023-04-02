@@ -49,13 +49,13 @@ public class SpigotConsolePlugin extends JavaPlugin {
 //        webSocketHandler.stop();
     }
 
-    public void initFiles() {
+    private void initFiles() {
         keyFile = new KeyFile(this);
 
         logFile = new LogFile(this);
     }
 
-    public void initHandlers() {
+    private void initHandlers() {
         roleHandler = new RoleHandler(this);
 
         encryptionHandler = new EncryptionHandler(this);
@@ -63,13 +63,13 @@ public class SpigotConsolePlugin extends JavaPlugin {
         appUserHandler = new AppUserHandler(this);
     }
 
-    public void initWebsocket() {
+    private void initWebsocket() {
         final int port = getConfig().getInt("port");
 
         webSocketHandler = new WebSocketHandler(this, port);
     }
 
-    public void initCommands() {
+    private void initCommands() {
         new SpigotConsoleExecutor(this);
     }
 }
